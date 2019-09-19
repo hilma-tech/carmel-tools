@@ -112,7 +112,7 @@ const CarmelValidate = {
             return { success: 1 };
         }
         else {
-            return { success: 0, rule: rule }
+            return { success: 0, rule: rule.format ? rule : { ...rule, format: { message: "כתובת לא מאומתת" } } }
         }
     },
 
@@ -225,14 +225,14 @@ const CarmelValidate = {
             format: {
                 pattern: "[a-z0-9א-ת -:._]*",
                 flags: "i",
-                message: "can only contain a-z,א-ת and 0-9, :_."
+                message: "חייב להכיל אותיות או מספרים בלבד"
             },
             length: { maximum: 10000 }
         },
         password: {
             format: {
                 pattern: '[א-תa-zA-Z0-9 ]{8,}',
-                message: "Must contain  capital, lowercase, and number in length of 8 charctars "
+                message: "הסיסמה חייבת להכיל אות קטנה ואות גדולה באנגליתתמספר ולהיות באורך של 8 ספרות "
             },
             length: { maximum: 10000 }
         }
