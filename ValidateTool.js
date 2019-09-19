@@ -10,10 +10,14 @@ const CarmelValidate = {
         if (this.isObject(target) && this.isObject(source)) {
             Object.keys(source).forEach(key => {
                 if (this.isObject(source[key])) {
-                    if (!(key in target))
-                        Object.assign(output, { [key]: source[key] });
-                    else
+                    if (!(key in target)) {
+                        if (key != "eTarget") {
+                            Object.assign(output, { [key]: source[key] });
+                        }
+                    }
+                    else {
                         output[key] = this.mergeDeep(target[key], source[key]);
+                    }
                 } else {
                     Object.assign(output, { [key]: source[key] });
                 }
@@ -48,8 +52,10 @@ const CarmelValidate = {
             }
         }
 
-        else
+        else {
+            if (rules.eTarget.type == 'number' && !data) return;
             return this.ValidateVar(data, rules);
+        }
 
 
         if (res === undefined)
@@ -102,9 +108,12 @@ const CarmelValidate = {
             rule = this.getNumberRules(rule);
 
         }
-        if (Validate.single(data, rule) === undefined)
+        if (Validate.single(data, rule) === undefined) {
             return { success: 1 };
-        else return { success: 0 }
+        }
+        else {
+            return { success: 0, rule: rule }
+        }
     },
 
 
@@ -166,9 +175,17 @@ const CarmelValidate = {
 
 
     getStringRules(rule = {}, originPath = "") {
-
         if (originPath.split('.').pop() === "email")
             return { email: true, length: { maximum: 100 } }
+        if (rule.email) {
+            return this.mergeDeep({
+                length: { maximum: 10000 }
+            }, rule);
+        }
+        if (rule.eTarget.type == 'password') {
+            return this.mergeDeep(
+                this.originRules.password, rule)
+        }
         return this.mergeDeep(
             this.originRules.string, rule)
     },
@@ -209,6 +226,13 @@ const CarmelValidate = {
                 pattern: "[a-z0-9א-ת -:._]*",
                 flags: "i",
                 message: "can only contain a-z,א-ת and 0-9, :_."
+            },
+            length: { maximum: 10000 }
+        },
+        password: {
+            format: {
+                pattern: '[א-תa-zA-Z0-9 ]{8,}',
+                message: "Must contain  capital, lowercase, and number in length of 8 charctars "
             },
             length: { maximum: 10000 }
         }
