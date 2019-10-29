@@ -53,7 +53,7 @@ const CarmelValidate = {
         }
 
         else {
-            if (rules.eTarget.type == 'number' && !data) return;
+            if (rules.eTarget && rules.eTarget.type == 'number' && !data) return;
             return this.ValidateVar(data, rules);
         }
 
@@ -182,7 +182,7 @@ const CarmelValidate = {
                 length: { maximum: 10000 }
             }, rule);
         }
-        if (rule.eTarget.type == 'password') {
+        if (rule.eTarget && rule.eTarget.type == 'password') {
             return this.mergeDeep(
                 this.originRules.password, rule)
         }
