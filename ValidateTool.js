@@ -53,7 +53,7 @@ const CarmelValidate = {
         }
 
         else {
-            if (rules.eTarget.type == 'number' && !data) return;
+            if (rules.eTarget && rules.eTarget.type == 'number' && !data) return;
             return this.ValidateVar(data, rules);
         }
 
@@ -182,7 +182,7 @@ const CarmelValidate = {
                 length: { maximum: 10000 }
             }, rule);
         }
-        if (rule.eTarget.type == 'password') {
+        if (rule.eTarget && rule.eTarget.type == 'password') {
             return this.mergeDeep(
                 this.originRules.password, rule)
         }
@@ -228,11 +228,12 @@ const CarmelValidate = {
                 message: "חייב להכיל אותיות או מספרים בלבד"
             },
             length: { maximum: 10000 }
-        },
+        }
+        ,
         password: {
             format: {
-                pattern: '[א-תa-zA-Z0-9 ]{8,}',
-                message: "הסיסמה חייבת להכיל אות קטנה ואות גדולה באנגליתתמספר ולהיות באורך של 8 ספרות "
+                pattern: '[א-תa-zA-Z0-9#@$?!&% ]{8,}',
+                message: "הסיסמה חייבת להכיל אות קטנה ואות גדולה באנגלית מספר ולהיות באורך של 8 ספרות "
             },
             length: { maximum: 10000 }
         }
