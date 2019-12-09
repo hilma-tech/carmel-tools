@@ -38,12 +38,20 @@ const AsyncTools = {
   parseJSON(response) {
     return new Promise((resolve, reject) =>
       response.json()
+
         .then((json) => resolve({
           status: response.status,
           ok: response.ok,
-          json,
+          json
         }))
-        .catch(error => { reject(error) })
+        .catch(error => { 
+          
+          if (response.status==204){ 
+            console.log("statusCode is 204!!!");
+            resolve({status:response.status,ok:response.ok,json:{}} );
+        }
+
+        reject(error) })
     );
   },
 
