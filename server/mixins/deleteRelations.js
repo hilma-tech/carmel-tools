@@ -2,6 +2,7 @@
 /**
  ** R - relation
  */
+//todo: make sure current model has not yet been gon through...
 
 //to run with debug data: DEBUG=module:tools node directory;
 const logTools = require('debug')('module:tools');
@@ -15,10 +16,11 @@ module.exports = function deleteRelations(Model, options) {
     Model.deleteByIdRelational = (id, destroyInstances, cb) => {
         (async () => {
             let error = null;
+            let modelThrough = [];
             const setErr = err => error = err;
             logTools("recived delete, the id is: ", id, "destroy: ", destroyInstances);
             const initialModel = Model;
-            await deleteInstances(initialModel, id, destroyInstances, setErr);
+            await deleteInstances(initialModel, id, destroyInstances, setErr, modelThrough);
             //now what do we do aboute the id???
             logTools("destroing self(father of all)")
             let [delSelfErr, res] = await to(initialModel.destroyById(id));
@@ -30,7 +32,8 @@ module.exports = function deleteRelations(Model, options) {
         })()
     }
     //switch all the find to delete
-    const deleteInstances = async (model, id, destroyInstances = true, setErr) => {
+    const deleteInstances = async (model, id, destroyInstances = true, setErr, modelThrough) => {
+        if(modelThrough.includes(model.name))return;
         logTools("going to destroy instances: ", destroyInstances);
         let ModelR = model.relations;
         logTools("model name: ", model.name);
@@ -45,7 +48,7 @@ module.exports = function deleteRelations(Model, options) {
                     break;
                 case "hasOne": case "hasMany":
                     logTools("Has some")//, Rname)
-                    deleteInstances(R.modelTo, undefined, destroyInstances);
+                    deleteInstances(R.modelTo, undefined, destroyInstances,setErr, [...modelThrough, model.name]);
                     const foreignKey = R.keyTo;
                     //where foreign key if our id
                     if (!id || !foreignKey) break;
