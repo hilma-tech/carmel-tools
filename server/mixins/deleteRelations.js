@@ -2,7 +2,6 @@
 /**
  ** R - relation
  */
-//todo: make sure current model has not yet been gon through...
 
 //to run with debug data: DEBUG=module:tools node directory;
 const logTools = require('debug')('module:tools');
@@ -13,79 +12,60 @@ const to = function (promise) {
         .catch(err => [err]);
 };
 module.exports = function deleteRelations(Model, options) {
-    Model.deleteByIdRelational = (id, destroyInstances, cb) => {
-        (async () => {
+    Model.deleteRelationalById = (id, next) => {
+        (async (next) => {
             let error = null;
-            let modelThrough = [];
-            const setErr = err => error = err;
-            logTools("recived delete, the id is: ", id, "destroy: ", destroyInstances);
-            const initialModel = Model;
-            await deleteInstances(initialModel, id, destroyInstances, setErr, modelThrough);
-            //now what do we do aboute the id???
-            logTools("destroing self(father of all)")
-            let [delSelfErr, res] = await to(initialModel.destroyById(id));
-            if (delSelfErr) setErr(delSelfErr);
-            logTools("res:  destroy self", res);
-            logTools("don! error is: ", error);
-            return cb(error, { success: 1 });
-            // return cb(null,{success: 1});
-        })()
+            const setError = err => error = err;
+            const [findInitErr, findInit] = await to(Model.findById(id));
+            if (!findInit) return next({ error: `no such id in ${Model.name}` });
+            if (findInitErr) setError(findInitErr);
+            await deleteInstances(Model, [id], [], setError);
+            //destroy initial instance by id: 
+            let [deleteInitialErr, deleteInitial] = await to(Model.destroyById(id));
+            if (deleteInitialErr) setError(deleteInitialErr);
+            return next(error, { success: 1 })
+        })(next)
     }
-    //switch all the find to delete
-    const deleteInstances = async (model, id, destroyInstances = true, setErr, modelThrough) => {
-        if(modelThrough.includes(model.name))return;
-        logTools("going to destroy instances: ", destroyInstances);
-        let ModelR = model.relations;
-        logTools("model name: ", model.name);
-        if (!ModelR) return;
-        for (let Rname in ModelR) {
-            logTools("relation name", Rname);
-            const R = ModelR[Rname];
-            logTools("to table: ", R.modelTo.name);
+    /**
+     * @param model (object) model to delete instances from
+     * @param id (array) of model instance to handel
+     * @param handledModelInstances (array) avoid infinate loop by checking if in this cycle the model was already checked
+     * @param setError (function) for collecting all errors from function in one place 
+     */
+    //todo: turn to transaction and deal with errors
+    const deleteInstances = async (model, id, handledModelInstances, setError) => {
+        // if (!model || model.name.includes(handledModelInstances)) return; 
+        const modelR = model.relations;
+        if (!modelR) return;
+        for (let Rname in modelR) {
+            const R = modelR[Rname];
             switch (R.type) {
-                case "belongsTo":
-                    logTools("BelongsTo")//, Rname);
-                    break;
+                case "belongsTo": break;
                 case "hasOne": case "hasMany":
-                    logTools("Has some")//, Rname)
-                    deleteInstances(R.modelTo, undefined, destroyInstances,setErr, [...modelThrough, model.name]);
+                    const nextModel = (R.modelThrough ? R.modelThrough : R.modelTo);
                     const foreignKey = R.keyTo;
-                    //where foreign key if our id
-                    if (!id || !foreignKey) break;
-                    logTools("back to model", model.name, "to: ", R.modelTo.name, "with relation: ", Rname)
-                    //bed information and patient data should turn into null and not delete ....
-                    //change find to destroyAll
-                    //*default of destroyInstances === true
-                    if (destroyInstances) {
-                        logTools("deleting instances");
-                        let [deleteErr, data] = await to(R.modelTo.destroyAll({ [foreignKey]: id }));
-                        if (deleteErr) setErr(deleteErr);
-                        logTools("found instances in", R.modelTo.name, "where: ", JSON.stringify({ where: { [foreignKey]: id } }));
-                        logTools("data", data);
-                    } else {
-                        //the foreignkey of each instance that matches { [foreignKey]: id } should turn to null
-                        let [updateErr, data] = await to(R.modelTo.updateAll({ [foreignKey]: id }, { [foreignKey]: null }));
-                        if (updateErr) setErr(updateErr);
-                        logTools("where: ", JSON.stringify({ where: { [foreignKey]: id } }));
-                        logTools("data", data);
-                    }
+                    const where = { where: { or: id.map(id => ({ [foreignKey]: id })) } };
+                    logTools("model: ", nextModel.name, "where", where.where.or);
+                    const [findErr, res] = await to(nextModel.find(where));
+                    if (findErr) setError(findErr);
+                    const foundInstances = res.map(instance => instance.id);
+                    logTools("foundInstances: ", foundInstances);
+                    if (foundInstances.length === 0) continue;
+                    const handledInstances = [...handledModelInstances, nextModel];
+                    //We want this function to run from leaf to root so we call it first on the next level
+                    await deleteInstances(nextModel, foundInstances, handledInstances, setError);
+                    const [deleteErr, deleteRes] = await to(nextModel.destroyAll(where));
+                    if(deleteErr) setError(deleteErr);
+                    logTools("delete res: ", deleteRes);
                     break;
+                default: logTools("We do not support relation type: %s in model %s", R.type, model.name);//!make sure log works %s
             }
         }
     }
-    Model.remoteMethod('deleteByIdRelational', {
-        accepts: [{
-            arg: 'id',
-            type: "number",
-            required: true,
-        },
-        {
-            arg: "destroyInstances",
-            type: "boolean"
-        }],
+    Model.remoteMethod("deleteRelationalById", {
+        accepts: [{ arg: "id", type: "number", required: true }],
         http: { verb: "delete" },
-        description: "delete data and all of it's relations!!",
+        description: "the function deletes the instance and ***All related instances***",
         returns: { arg: "res", type: "object" }
     })
-
 }
