@@ -44,10 +44,11 @@ module.exports = function deleteRelations(Model, options) {
                 case "hasOne": case "hasMany":
                     const nextModel = (R.modelThrough ? R.modelThrough : R.modelTo);
                     const foreignKey = R.keyTo;
-                    const where = { where: { or: id.map(id => ({ [foreignKey]: id })) } };
-                    logTools("model: ", nextModel.name, "where", where.where.or);
-                    const [findErr, res] = await to(nextModel.find(where));
+                    const where = { or: id.map(id => ({ [foreignKey]: id })) };
+                    logTools("model: ", nextModel.name, "where", where.or);
+                    const [findErr, res] = await to(nextModel.find({ where: where }));
                     if (findErr) setError(findErr);
+                    if (!res) continue;
                     const foundInstances = res.map(instance => instance.id);
                     logTools("foundInstances: ", foundInstances);
                     if (foundInstances.length === 0) continue;
@@ -55,7 +56,7 @@ module.exports = function deleteRelations(Model, options) {
                     //We want this function to run from leaf to root so we call it first on the next level
                     await deleteInstances(nextModel, foundInstances, handledInstances, setError);
                     const [deleteErr, deleteRes] = await to(nextModel.destroyAll(where));
-                    if(deleteErr) setError(deleteErr);
+                    if (deleteErr) setError(deleteErr);
                     logTools("delete res: ", deleteRes);
                     break;
                 default: logTools("We do not support relation type: %s in model %s", R.type, model.name);//!make sure log works %s
