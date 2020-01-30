@@ -232,7 +232,7 @@ const CarmelValidate = {
         ,
         password: {
             format: {
-                pattern: '[א-תa-zA-Z0-9#@$?!&% ]{8,}',
+                pattern: '(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}',
                 message: "הסיסמה חייבת להכיל אות קטנה ואות גדולה באנגלית מספר ולהיות באורך של 8 ספרות "
             },
             length: { maximum: 10000 }
