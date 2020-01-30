@@ -31,7 +31,7 @@ const CarmelValidate = {
             throw 'TOO DEEP BRO.' + depth;
         if (whitelist) {
             data = Validate.cleanAttributes(data, whitelist);
-            if (rules) rules = Validate.cleanAttributes(rules, whitelist);
+            // if (rules) rules = Validate.cleanAttributes(rules, whitelist); //clean up rules isnt helping anythig.
         }
         let res;
         if (this.isObject(data)) {
@@ -85,7 +85,7 @@ const CarmelValidate = {
         else if (Validate.isNumber(data))
             rules[originPath] = this.getNumberRules(rules[originPath]);
 
-        return Validate.cleanAttributes(rules, this.rulesWhitelist);
+        return rules;
 
     },
 
@@ -194,14 +194,17 @@ const CarmelValidate = {
     getNumberRules(rule = null) {
         if (!rule) rule = {};
         rule = Validate.cleanAttributes(rule, this.rulesWhitelist)
-        let newRules = {
-            type: 'number',
-            numericality: {
-                greaterThan: -10000000000,
-                lessThanOrEqualTo: 10000000000
+        if ((rule.type && rule.type === "number") || !rule.type) {
+            let newRules = {
+                type: 'number',
+                numericality: {
+                    greaterThan: -10000000000,
+                    lessThanOrEqualTo: 10000000000
+                }
             }
+            return this.mergeDeep(newRules, rule);
         }
-        return this.mergeDeep(newRules, rule);
+        else return rule;
     },
 
     originRules: {
