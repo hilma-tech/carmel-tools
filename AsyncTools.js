@@ -1,3 +1,4 @@
+import GenericTools from './GenericTools'
 const AsyncTools = {
 
   to(promise) {
@@ -51,7 +52,7 @@ const AsyncTools = {
   },
 
   superFetch(url, payload) {
-
+    if (GenericTools.isCordova() && process.env.REACT_APP_DOMAIN) url = process.env.REACT_APP_DOMAIN + url;
     let fPromise = payload == null ? fetch(url) : fetch(url, payload);
 
     return new Promise((resolve, reject) => {
@@ -64,7 +65,7 @@ const AsyncTools = {
           // extract the error from the server's json
           return resolve([null, response.json]);
         })
-        .catch((error) => resolve([null, "No response, check your network connectivity"]));
+        .catch((error) => resolve([null, { error: { message: "No response, check your network connectivity", statusCode: 500, name: "ERROR" } }]));
     });
   }
 
