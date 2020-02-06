@@ -39,6 +39,7 @@ function validateFullNameInput(input, required) {
     return '';
 }
 
+//TODO one day- allow +972
 function validatePhoneInput(input, required, placeholder, length=10) {
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס מספר טלפון';

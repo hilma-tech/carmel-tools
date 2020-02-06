@@ -8,12 +8,7 @@
 
 //to run with debug data: DEBUG=module:tools node directory;
 const logTools = require('debug')('module:tools');
-const to = function (promise) {
-    return promise.then(data => {
-        return [null, data];
-    })
-        .catch(err => [err]);
-};
+const to = function (promise) { return promise.then(data => { return [null, data]; }).catch(err => [err]); };
 const path = require('path');
 const fs = require('fs');
 const fileModels = ["Images", "Files", "Audio", "Video"];
