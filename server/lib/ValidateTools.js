@@ -1,9 +1,68 @@
-import Validate from 'validate.js';
+const Validate = require('validate.js');
 
-const CarmelValidate = {
+class ValidateTools {
+
+    constructor() {
+        this.originRules = {
+            array: {
+                range: {
+                    min: 0,
+                    max: 100
+                }
+            },
+            object: {
+                maximum: 30
+            },
+            number: {
+                range: {
+                    min: -1000000000,
+                    max: 1000000000
+                }
+            },
+            string: {
+
+                format: {
+                    pattern: "[a-z0-9א-ת -:._]*",
+                    flags: "i",
+                    message: "חייב להכיל אותיות או מספרים בלבד"
+                },
+                length: { maximum: 10000 }
+            }
+            ,
+            password: {
+                format: {
+                    pattern: '(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}',
+                    message: "הסיסמה חייבת להכיל אות קטנה ואות גדולה באנגלית מספר ולהיות באורך של 8 ספרות "
+                },
+                length: { maximum: 10000 }
+            }
+        }
+        
+
+        this.rulesWhitelist = {
+            earliest: true,
+            latest: true,
+            dateOnly: true,
+            equality: true,
+
+            email: true,
+            length: true,
+            exclusion: true,
+            inclusion: true,
+            message: true,
+            format: true,
+
+            numericality: true,
+            presence: true,
+            type: true,
+            url: true
+
+        }
+    }
+
     isObject(item) {
         return (item && typeof item === 'object' && !Array.isArray(item));
-    },
+    }
 
     mergeDeep(target, source) { // this function merges objects. it also merges the sub-objects.
         let output = Object.assign({}, target);
@@ -24,7 +83,7 @@ const CarmelValidate = {
             });
         }
         return output;
-    },
+    }
 
     runValidate(data, rules = null, whitelist = null, depth = 10) {
         if (depth < 0)
@@ -64,7 +123,7 @@ const CarmelValidate = {
         return { success: 0 };
 
 
-    },
+    }
 
     createDefaultRules(data, rules, depth, originPath = "") {
         if (depth < 0)
@@ -87,7 +146,7 @@ const CarmelValidate = {
 
         return rules;
 
-    },
+    }
 
     ValidateVar(data, rule) { // for variable who is not inside an object we use validate.single and not validate.validate(). 
         if (this.isObject(data))
@@ -114,7 +173,7 @@ const CarmelValidate = {
         else {
             return { success: 0, rule: rule.format ? rule : { ...rule, format: { message: "כתובת לא מאומתת" } } }
         }
-    },
+    }
 
 
     getObjectRules(data, rules, depth = 0, originKey = "") { // in this function we dont clean attr BECAUSE its the fileds names.
@@ -134,7 +193,7 @@ const CarmelValidate = {
             rules = this.mergeDeep(rules, this.createDefaultRules(data[key], rules, depth - 1, originKey + key));
         });
         return rules;
-    },
+    }
 
 
     getArrayRules(data, rules, depth) { // we run extra validations on array: this is not the default of validate.js.
@@ -167,10 +226,10 @@ const CarmelValidate = {
         return {
             length: { minimum: 0, maximum: 100 }
         }
-    },
+    }
 
 
-    getDateRules() { }, //todo?? 
+    getDateRules() { } //todo?? 
 
 
 
@@ -188,7 +247,7 @@ const CarmelValidate = {
         }
         return this.mergeDeep(
             this.originRules.string, rule)
-    },
+    }
 
 
     getNumberRules(rule = null) {
@@ -205,96 +264,8 @@ const CarmelValidate = {
             return this.mergeDeep(newRules, rule);
         }
         else return rule;
-    },
-
-    originRules: {
-        array: {
-            range: {
-                min: 0,
-                max: 100
-            }
-        },
-        object: {
-            maximum: 30
-        },
-        number: {
-            range: {
-                min: -1000000000,
-                max: 1000000000
-            }
-        },
-        string: {
-
-            format: {
-                pattern: "[a-z0-9א-ת -:._]*",
-                flags: "i",
-                message: "חייב להכיל אותיות או מספרים בלבד"
-            },
-            length: { maximum: 10000 }
-        }
-        ,
-        password: {
-            format: {
-                pattern: '(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}',
-                message: "הסיסמה חייבת להכיל אות קטנה ואות גדולה באנגלית מספר ולהיות באורך של 8 ספרות "
-            },
-            length: { maximum: 10000 }
-        }
-    },
-
-
-    rulesWhitelist: {
-        earliest: true,
-        latest: true,
-        dateOnly: true,
-        equality: true,
-
-        email: true,
-        length: true,
-        exclusion: true,
-        inclusion: true,
-        message: true,
-        format: true,
-
-        numericality: true,
-        presence: true,
-        type: true,
-        url: true
-
     }
 
 };
 
-export default CarmelValidate;
-
-
-// console.log(" WELL,",
-
-//     CarmelValidate.runValidate(
-//         {
-//             email: "kopgfkdp@fds.com",
-//             arr: ["str$$"],
-//             username: { ar: { trrt: 4 } },
-//             you: 42,
-//             password: '230jvjvjve'
-//         },
-//         {
-//             password: { type: 'string', length: { minimum: 3 } },
-//             you: {
-//                 numericality: {
-//                     greaterThan: 32
-//                 }
-//             },
-//             arr: {
-//                 extendedRules: {
-//                     consistent: false, all: {
-//                         type: 'string',
-//                         format: {
-//                             pattern: "[a-z0-9א-ת $]*",
-//                             flags: "i",
-//                             message: "hahaha"
-//                         },
-//                     }
-//                 }
-//             }
-//         }))
+module.exports = new ValidateTools();
