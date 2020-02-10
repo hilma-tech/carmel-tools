@@ -120,7 +120,7 @@ class ValidateTools {
         if (res === undefined)
             return { data: data, success: 1 };
         console.log("ERROR:", res);
-        return { success: 0 };
+        return { success: 0 , errors: res };
 
 
     }
