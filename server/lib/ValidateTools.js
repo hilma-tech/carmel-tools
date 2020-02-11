@@ -107,7 +107,7 @@ class ValidateTools {
             }
             catch (err) {
                 console.log(err);
-                return { success: 0 };
+                return { success: 0, errors: err };
             }
         }
 
