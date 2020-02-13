@@ -1,6 +1,8 @@
 'use strict';
 
 const logTools = require('debug')('module:tools');
+const path = require('path');
+const fs = require('fs');
 
 let defaultExcludedFields = {
     "Audio": ["owner"],
@@ -17,15 +19,19 @@ let defaultExcludedFields = {
     "Passwords": ["id", "owner", "password"],
     "AccessLogger": ["id", "email", "created"]
 };
+const excludedFieldsFilePath = path.join(__dirname, '../../../../../server', 'exclude-model-fields.json');
+// logTools("excluded fields file path", excludedFieldsFilePath);
 let excludedFields = defaultExcludedFields;
 try {
     // Try the exclude-model-fields.json first
-    excludedFields = require('./../../../../consts/exclude-model-fields.json');
+    excludedFields = JSON.parse(fs.readFileSync(excludedFieldsFilePath, 'utf8'));
     if (!excludedFields) excludedFields = defaultExcludedFields;
 } catch (err) {
     // Fall back to empty object
+    logTools(`Could not fetch /server/exclude-model-fields.json and parse it`);
     excludedFields = defaultExcludedFields;
 }
+
 
 // logTools("Excluded fields are", excludedFields);
 
