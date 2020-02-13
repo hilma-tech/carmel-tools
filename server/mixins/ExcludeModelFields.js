@@ -1,15 +1,33 @@
 'use strict';
 
 const logTools = require('debug')('module:tools');
-let excludedFields;
+
+let defaultExcludedFields = {
+    "Audio": ["owner"],
+    "CustomUser": ["id", "password", "credentials", "emailVerified", "verificationToken"],
+    "Files": ["owner"],
+    "Images": ["owner"],
+    "Notification": ["user_id"],
+    "NotificationsMap": ["user_id"],
+    "RoleMapping": ["principalId"],
+    "User": ["id", "password", "credentials", "emailVerified", "verificationToken"],
+    "Video": ["owner"],
+    "Games": ["ownerId"],
+    "RecordsPermissions": ["principalId"],
+    "Passwords": ["id", "owner", "password"],
+    "AccessLogger": ["id", "email", "created"]
+};
+let excludedFields = defaultExcludedFields;
 try {
     // Try the exclude-model-fields.json first
     excludedFields = require('./../../../../consts/exclude-model-fields.json');
-    if (!excludedFields) excludedFields = {};
+    if (!excludedFields) excludedFields = defaultExcludedFields;
 } catch (err) {
     // Fall back to empty object
-    excludedFields = {};
+    excludedFields = defaultExcludedFields;
 }
+
+// logTools("Excluded fields are", excludedFields);
 
 module.exports = function ExcludeModelFields(Model) {
 
