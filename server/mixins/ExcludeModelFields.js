@@ -1,7 +1,15 @@
 'use strict';
 
 const logTools = require('debug')('module:tools');
-const excludedFields = require('./../../../../consts/exclude-model-fields.json')
+let excludedFields;
+try {
+    // Try the exclude-model-fields.json first
+    excludedFields = require('./../../../../consts/exclude-model-fields.json');
+    if (!excludedFields) excludedFields = {};
+} catch (err) {
+    // Fall back to empty object
+    excludedFields = {};
+}
 
 module.exports = function ExcludeModelFields(Model) {
 
@@ -28,7 +36,7 @@ module.exports = function ExcludeModelFields(Model) {
     });
 
     function deleteExcludedFields(field, modelName) {
-        if (!field) return;
+        if (!field || !excludedFields) return;
         const eModelFields = excludedFields[modelName];
 
         for (let key in field) {
