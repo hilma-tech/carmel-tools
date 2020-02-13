@@ -39,7 +39,7 @@ module.exports = function ExcludeModelFields(Model) {
         if (Array.isArray(ctx.result)) {
             for (const element of ctx.result) {
                 field = (element && element.__data || element);
-                deleteExcludedFields(field, Model.name);
+                deleteExcludedFields(field, Model);
             }
 
             logTools("after delete ctx.result", ctx.result);
@@ -47,31 +47,45 @@ module.exports = function ExcludeModelFields(Model) {
         }
 
         field = (ctx.result && ctx.result.__data) || ctx.result;
-        deleteExcludedFields(field, Model.name);
+        deleteExcludedFields(field, Model);
         logTools("after delete ctx.result", ctx.result);
 
         return next();
     });
 
-    function deleteExcludedFields(field, modelName) {
+    function deleteExcludedFields(field, model) {
+        const modelName = model.name;
+        logTools("deleteExcludedFields is launched with model '%s'", modelName);
         if (!field || !excludedFields) return;
         const eModelFields = excludedFields[modelName];
 
         for (let key in field) {
-            // if (!ctx.result.__data.hasOwnProperty(key)) continue;
             if (eModelFields.includes(key)) {
                 delete field[key];
                 logTools("ExcludeModelFields on Model '%s' deleted key '%s'", modelName, key);
             }
 
-            const modelR = Model.relations;
+            const modelR = model.relations;
             if (!modelR) return;
             for (let Rname in modelR) {
                 if (key === Rname) {
                     const R = modelR[Rname];
                     logTools("R.modelTo.name", R.modelTo.name);
-                    let newField = (field[key] && field[key].__data || field[key]);
-                    deleteExcludedFields(newField, R.modelTo.name)
+
+                    let newField = null;
+                    if (Array.isArray(field[key])) {
+                        logTools("Field found was array");
+                        for (const element of field[key]) {
+                            newField = (element && element.__data || element);
+                            deleteExcludedFields(newField, R.modelTo);
+                        }
+                        continue;
+                    }
+
+                    logTools("Field found was object");
+
+                    newField = (field[key] && field[key].__data || field[key]);
+                    deleteExcludedFields(newField, R.modelTo)
                 }
             }
         }
