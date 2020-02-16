@@ -74,7 +74,7 @@ module.exports = function ExcludeModelFields(Model) {
                     if (!emfk) continue;
                     if (emf[emfk]) {
                         //We can maybe accept roles aslo in an array so we can include fields for multiple roles
-                        if (emf[emfk].e) { if (role && role === emf[emfk].inc) continue; }
+                        if (emf[emfk].inc) { if (role && role === emf[emfk].inc) continue; }
                         eModelFields.push(emfk);
                     }
                 }
