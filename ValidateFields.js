@@ -59,7 +59,7 @@ function validateEmailInput(input, required) {
 }
 
 function validatePasswordInput(input, required) {
-    let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{6,}$/;
+    let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*().~`\[\]{}\|\\-_=+<>:"?]{6,}$/;
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס סיסמא';
     else if (input.length < 6) return 'הסיסמא חייבת להכיל לפחות 6 תווים';
@@ -93,14 +93,15 @@ function validateStringInput(input, required, placeholder, length) {
 }
 
 function validateAddressInput(input, required) {
-    let res = /[\u0590-\u05FF \s 0-9]*/i.exec(input);
+    let res = /['\u0590-\u05FF \s 0-9]*/i.exec(input);
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס כתובת ומספר בית';
-    else if (!/\d/.test(input) || res[0] !== input || !/[\u0590-\u05FF]/.test(input)) return 'חייב להכיל כתובת בעברית ומספר';
-    else if (!/^[\u0590-\u05FF \s]*\s[0-9]*[0-9 \s]$/.test(input) && !/^[0-9 \s][0-9]*\s[\u0590-\u05FF \s]*$/.test(input)) return 'כתובת המגורים שהזנת שגויה';
+    else if (!/\d/.test(input) || res[0] !== input || !/['\u0590-\u05FF]/.test(input)) return 'חייב להכיל כתובת בעברית ומספר';
+    else if (!/^['\u0590-\u05FF ]* [0-9]*[0-9  ]$/.test(input) && !/^[0-9  ][0-9]* ['\u0590-\u05FF ]*$/.test(input)) return 'כתובת המגורים שהזנת שגויה';
 
     return '';
 }
+
 //should check max of number (smaller than largest int/int(11))
 
 const maxIntValue = 999999999;//2147483647;
