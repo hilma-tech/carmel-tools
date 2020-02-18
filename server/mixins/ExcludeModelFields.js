@@ -61,7 +61,7 @@ module.exports = function ExcludeModelFields(Model) {
         const modelName = M.name;
         logTools("deleteExcludedFields is launched with model '%s'", modelName);
         if (!field || !excludedFields) return;
-        let eModelFields = excludedFields[modelName];
+        let eModelFields = [...excludedFields[modelName]];
         // let modelProperties = M.definition.properties; // We can get eModelFields from modelProperties
 
         for (let key in field) {
