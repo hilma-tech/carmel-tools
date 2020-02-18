@@ -3,30 +3,6 @@
 const logTools = require('debug')('module:tools');
 function to(promise) { return promise.then(data => { return [null, data]; }).catch(err => [err]); }
 
-let defaultExcludedFields = {
-    "Audio": ["owner"],
-    "CustomUser": ["id", "password", "credentials", "emailVerified", "verificationToken"],
-    "Files": ["owner"],
-    "Images": ["owner"],
-    "Notification": ["user_id"],
-    "NotificationsMap": ["user_id"],
-    "RoleMapping": ["principalId"],
-    "User": ["id", "password", "credentials", "emailVerified", "verificationToken"],
-    "Video": ["owner"],
-    "Games": ["ownerId"],
-    "RecordsPermissions": ["principalId"],
-    "Passwords": ["id", "owner", "password"],
-    "AccessLogger": ["id", "email", "created"]
-};
-let excludedFields = defaultExcludedFields;
-// Try the exclude-model-fields.json first
-try {
-    excludedFields = require('./../../../../../server/exclude-model-fields.json');
-    if (!excludedFields) excludedFields = defaultExcludedFields;
-} catch (err) { excludedFields = defaultExcludedFields; }
-
-// logTools("Excluded fields are", excludedFields);
-
 module.exports = function ExcludeModelFields(Model) {
 
     let role = null;
@@ -60,9 +36,8 @@ module.exports = function ExcludeModelFields(Model) {
     function deleteExcludedFields(field, M) {
         const modelName = M.name;
         logTools("deleteExcludedFields is launched with model '%s'", modelName);
-        if (!field || !excludedFields) return;
-        let eModelFields = [...excludedFields[modelName]];
-        // let modelProperties = M.definition.properties; // We can get eModelFields from modelProperties
+        let eModelFields = [...M.definition.settings.excludeFields]; // We can get eModelFields from modelProperties
+        if (!field || !eModelFields) return;
 
         for (let key in field) {
             //Check if to include a certain field for a specific role
@@ -74,7 +49,10 @@ module.exports = function ExcludeModelFields(Model) {
                     if (!emfk) continue;
                     if (emf[emfk]) {
                         //We can maybe accept roles aslo in an array so we can include fields for multiple roles
-                        if (emf[emfk].inc) { if (role && role === emf[emfk].inc) continue; }
+                        if (emf[emfk].includeForRoles) {
+                            if (role && role === emf[emfk].includeForRoles)
+                                continue;
+                        }
                         eModelFields.push(emfk);
                     }
                 }
