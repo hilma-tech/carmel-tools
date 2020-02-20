@@ -3,6 +3,7 @@
 const logTools = require('debug')('module:tools');
 function to(promise) { return promise.then(data => { return [null, data]; }).catch(err => [err]); }
 
+// For security reasons sometimes we might want to exclude certain fields from the client
 module.exports = function ExcludeModelFields(Model) {
 
     let role = null;
@@ -50,7 +51,9 @@ module.exports = function ExcludeModelFields(Model) {
                     if (emf[emfk]) {
                         //We can maybe accept roles aslo in an array so we can include fields for multiple roles
                         if (emf[emfk].includeForRoles) {
-                            if (role && role === emf[emfk].includeForRoles)
+                            if (role && role === emf[emfk].includeForRoles || //if role is a string
+                                (Array.isArray(emf[emfk].includeForRoles) &&
+                                    emf[emfk].includeForRoles.includes(role))) //if role is an array
                                 continue;
                         }
                         eModelFields.push(emfk);
