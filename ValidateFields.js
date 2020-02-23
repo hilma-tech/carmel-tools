@@ -34,7 +34,7 @@ function validateFullNameInput(input, required) {
     //TODO make sure that the following regex is only hebrew letters and at least one space between leters
     //without counting spaces at beggining or end of input
     else if (res[0] !== input) return `השם חייב להכיל רק אותיות בעברית`;
-    else if (!input || !input.length || !/[\u0590-\u05FF]\s[\u0590-\u05FF]/.test(input)) return 'אנא הכנס שם פרטי ושם משפחה';
+    else if (!input || !input.length || !/[\u0590-\u05FF]\s{1,}[\u0590-\u05FF]/.test(input)) return 'אנא הכנס שם פרטי ושם משפחה';
 
     return '';
 }
