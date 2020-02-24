@@ -28,13 +28,13 @@ function validateUsernameInput(input, required, placeholder = "שם משתמש")
 
 function validateFullNameInput(input, required) {
 
-    let res = /[\u0590-\u05FF  \"\'\- \s]*/i.exec(input);
+    let res = /[\u0590-\u05FF \" \' \s]*/i.exec(input);
     if (input && !input.length && !required) return '';
     else if (input.length > 30) return 'השם חייב להכיל פחות מ30 תווים';
     //TODO make sure that the following regex is only hebrew letters and at least one space between leters
     //without counting spaces at beggining or end of input
     else if (res[0] !== input) return `השם חייב להכיל רק אותיות בעברית`;
-    else if (!input || !input.length || !/[\u0590-\u05FF \"\'\-]\s{1,}[ \"\'\-\u0590-\u05FF]/.test(input)) return 'אנא הכנס שם פרטי ושם משפחה';
+    else if (!input || !input.length || !/[\u0590-\u05FF \" \' \s]\s{1,}[\s \" \' \u0590-\u05FF]/.test(input)) return 'אנא הכנס שם פרטי ושם משפחה';
 
     return '';
 }
