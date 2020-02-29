@@ -16,7 +16,6 @@ class EnvHandler {
         return true;
     }
 
-
     isEnvStaging() { return process.env.NODE_ENV === "staging" ? true : false; }
 
     isEnvProduction() { return process.env.NODE_ENV === "production" ? true : false; }
