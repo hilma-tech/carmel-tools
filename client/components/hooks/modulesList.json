@@ -1,0 +1,15 @@
+{
+    "modulesList": [
+      "fileshandler",
+      "dashboard",
+      "auth",
+      "scripts",
+      "tools",
+      "samples",
+      "notifications"
+    ],
+    "notifications": {
+      "publicVapidKey": ""
+    }
+  }
+  
