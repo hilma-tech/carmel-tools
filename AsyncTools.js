@@ -26,7 +26,6 @@ const AsyncTools = {
             .catch(err => res([null, err]));
 
         } else {
-          console.log('error hy', r);
           res([null, "No response, check your network connectivity"]);
         }
 
