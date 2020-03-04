@@ -15,7 +15,7 @@ import HooksRepository from './HooksRepository'
             let moduleInstance = null;
 
             try {
-                moduleInstance = require(`./../../../../${moduleName}/consts/HooksList`).default;
+                moduleInstance = require(`./../../../${moduleName}/consts/HooksList`).default;
                  new moduleInstance(this.hooksRepository).addHooks()
 
             } catch (err) {
