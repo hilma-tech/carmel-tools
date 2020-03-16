@@ -67,11 +67,11 @@ function validateEmailInput(input, required) {
 }
 
 function validatePasswordInput(input, required) {
-    let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9!-@#$%^&*().~`\[\]{}\|\\-_=+<>:"?]{6,}$/;
+    let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^().~`\[\]{}\|\\-_=+<>:"?])[A-Za-z\d@$!%*?&#^().~`\[\]{}\|\\-_=+<>:"?]{8,}$/;
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס סיסמא';
-    else if (input.length < 6) return 'הסיסמא חייבת להכיל לפחות 6 תווים';
-    else if (!regex.test(input)) return 'הסיסמא חייבת להכיל מספר, אות גדולה ואות קטנה באנגלית';
+    else if (input.length < 8) return 'הסיסמא חייבת להכיל לפחות 8 תווים';
+    else if (!regex.test(input)) return 'הסיסמא חייבת להכיל מספר, תו מיוחד, אות גדולה ואות קטנה באנגלית';
 
     return '';
 }
