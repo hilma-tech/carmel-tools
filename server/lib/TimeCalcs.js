@@ -1,5 +1,8 @@
 module.exports = new class TimeCalcs {
 
+
+    //validate datetime with regex: ([0-9]{4}[-][0-9]{2}[-][0-9]{2}[T][0-9]{2}[:][0-9]{2}[:][0-9]{2}[.](000Z))
+
     // accepts: d - date
     //          useOffset - if we want to use israel's timezone
     // returns: datetime with format to post to database
