@@ -21,8 +21,6 @@ export default class HooksRepository {
         // ];
     }
     getHooksByKeys(MODULE_NAME, HOOK_NAME) {
-
-
         let hooksOfModule;
         this._hooksRepositoryArr.forEach(elem => {
             if (Object.keys(elem).includes(MODULE_NAME)) {
@@ -34,29 +32,18 @@ export default class HooksRepository {
         return hooksOfModule[HOOK_NAME];
 
         // ...find hooks by keys.....
-
-
     }
 
     applyHook(MODULE_NAME, HOOK_NAME, args) {
-
-        let returnValue;
         let hooks = this.getHooksByKeys(MODULE_NAME, HOOK_NAME);
-        if (hooks) {
-            hooks.forEach((hook) => {
-
-                if (typeof hook === "function") {
-
-                    hook(args)
-                    //apply
-                }
-
-            })
-        }
-
-
+        if (!hooks) return;
+        hooks.forEach((hook) => {
+            if (typeof hook === "function") {
+                hook(args)
+                //apply
+            }
+        });
     }
-
 
     applyFilterHook(MODULE_NAME, HOOK_NAME, args) {
         let hooks = [];
@@ -67,26 +54,20 @@ export default class HooksRepository {
 
         return returnValue;
     }
+
     applyFilterHooks(hooks, args) {
-        let value;
-        if (hooks.length === 0) {
-            return args;
-        }
+        let value = null;
+        if (!hooks || hooks.length === 0) return args;
+
         if (typeof hooks[hooks.length - 1] === "function") {
             value = hooks[hooks.length - 1](args);
             hooks.pop()
             return this.applyFilterHooks(hooks, value)
-
-        } 
-        else {
-            return { err: "hook is not a function" }
         }
-
-
+        return { err: "hook is not a function" }
     }
 
     addFilterHook(MODULE_NAME, HOOK_NAME, fn) {
-
         this.addHook(MODULE_NAME, HOOK_NAME, fn)
     }
 
@@ -111,22 +92,14 @@ export default class HooksRepository {
                 moduleKey[HOOK_NAME].push(fn);
             }
             else {
-                if (HOOK_NAME !== "undefined")
-                    // {
-
-                    moduleKey[HOOK_NAME] = [fn]
-                // }
                 //if not include hook name
+                if (HOOK_NAME !== "undefined") moduleKey[HOOK_NAME] = [fn]
             }
-        }
-        else {
+        } else {
             //if not include module name
             hooksObj[HOOK_NAME] = [fn];
             moduleObj[MODULE_NAME] = hooksObj;
             this._hooksRepositoryArr.push(moduleObj)
         }
-
-
     }
-
 }
