@@ -40,11 +40,19 @@ function validateFullNameInput(input, required) {
 }
 
 //TODO one day- allow +972
+
+// validatePhoneInput supports the following phone formats: (the first part can be either 2 or 3 numbers)
+// (023) 456 7899
+// (023)-456-7899
+// 023-456-7899
+// 023 456 7899
+// 0234567899
 function validatePhoneInput(input, required, placeholder, length = 10) {
+    input = input.replace(/[^0-9]/g, "");
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס מספר טלפון';
     else if (input.length !== length) return `מספר הטלפון חייב להכיל בדיוק ${length} תווים`;
-    else if (!/^0[0-9]{8,9}$/.test(input)) return 'מספר הטלפון לא תקין';
+    else if (!(/^0\(?([0-9]{1,2})\)?([ -]?)([0-9]{3})\2([0-9]{4})/.test(input))) return 'מספר הטלפון לא תקין';
     // else if(/^\d+$/.test(input)) return 'Must include only numbers';
     return '';
 }
@@ -59,11 +67,11 @@ function validateEmailInput(input, required) {
 }
 
 function validatePasswordInput(input, required) {
-    let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*().~`\[\]{}\|\\-_=+<>:"?]{6,}$/;
+    let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^().~`\[\]{}\|\\-_=+<>:"?])[A-Za-z\d@$!%*?&#^().~`\[\]{}\|\\-_=+<>:"?]{8,}$/;
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס סיסמא';
-    else if (input.length < 6) return 'הסיסמא חייבת להכיל לפחות 6 תווים';
-    else if (!regex.test(input)) return 'הסיסמא חייבת להכיל מספר, אות גדולה ואות קטנה באנגלית';
+    else if (input.length < 8) return 'הסיסמא חייבת להכיל לפחות 8 תווים';
+    else if (!regex.test(input)) return 'הסיסמא חייבת להכיל מספר, תו מיוחד, אות גדולה ואות קטנה באנגלית';
 
     return '';
 }
