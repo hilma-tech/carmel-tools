@@ -1,6 +1,4 @@
-
 import GenericTools from "./../../tools/GenericTools"
-import { TouchableNativeFeedback } from "react-native-gesture-handler"
 
 const PlatformHandler = {
 
