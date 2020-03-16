@@ -5,17 +5,20 @@
 
 export default class HooksRepository {
     constructor() {
-        this._hooksRepositoryArr = [{
-            auth: {
-                BEFORE_LOGIN: [() => { console.log("Im before login") }],
-                AFTER_LOGIN: [() => { console.log("Im after login") }]
-            }
-        },
-        {
-            fileshandler: {
-                BEFORE_LOGIN: [() => { }]
-            }
-        }];
+        this._hooksRepositoryArr = []
+        //  = [
+        //     {
+        //     auth: {
+        //         BEFORE_LOGIN: [() => { console.log("Im before login") }],
+        //         AFTER_LOGIN: [() => { console.log("Im after login") }]
+        //     }
+        // },
+        // {
+        //     fileshandler: {
+        //         BEFORE_LOGIN: [() => { }]
+        //     }
+        // }
+        // ];
     }
     getHooksByKeys(MODULE_NAME, HOOK_NAME) {
 
@@ -36,29 +39,59 @@ export default class HooksRepository {
     }
 
     applyHook(MODULE_NAME, HOOK_NAME, args) {
+
         let returnValue;
         let hooks = this.getHooksByKeys(MODULE_NAME, HOOK_NAME);
+        if (hooks) {
+            hooks.forEach((hook) => {
 
-        hooks.forEach((hook) => {
+                if (typeof hook === "function") {
 
-            if (typeof hook === "function") {
+                    hook(args)
+                    //apply
+                }
 
-                hook(args)
-                //apply
-            }
-            else {
-
-                returnValue = hook;
-
-            }
-        })
-        
-        if (returnValue) {
-            return returnValue;
+            })
         }
 
+
     }
+
+
+    applyFilterHook(MODULE_NAME, HOOK_NAME, args) {
+        let hooks = [];
+        hooks = this.getHooksByKeys(MODULE_NAME, HOOK_NAME);
+
+        let returnValue;
+        returnValue = this.applyFilterHooks(hooks, args)
+
+        return returnValue;
+    }
+    applyFilterHooks(hooks, args) {
+        let value;
+        if (hooks.length === 0) {
+            return args;
+        }
+        if (typeof hooks[hooks.length - 1] === "function") {
+            value = hooks[hooks.length - 1](args);
+            hooks.pop()
+            return this.applyFilterHooks(hooks, value)
+
+        } 
+        else {
+            return { err: "hook is not a function" }
+        }
+
+
+    }
+
+    addFilterHook(MODULE_NAME, HOOK_NAME, fn) {
+
+        this.addHook(MODULE_NAME, HOOK_NAME, fn)
+    }
+
     addHook(MODULE_NAME, HOOK_NAME, fn) {
+
         let moduleKey = [];
         let hooksKey = [];
         let moduleHooks = [];
@@ -68,6 +101,7 @@ export default class HooksRepository {
 
         moduleHooksIdx = this._hooksRepositoryArr.findIndex(elem => Object.keys(elem).includes(MODULE_NAME))
         if (moduleHooksIdx >= 0) {
+
             //if include module name
             moduleHooks = this._hooksRepositoryArr[moduleHooksIdx]
             hooksKey = Object.keys(moduleHooks[MODULE_NAME])
@@ -77,8 +111,12 @@ export default class HooksRepository {
                 moduleKey[HOOK_NAME].push(fn);
             }
             else {
+                if (HOOK_NAME !== "undefined")
+                    // {
+
+                    moduleKey[HOOK_NAME] = [fn]
+                // }
                 //if not include hook name
-                moduleKey[HOOK_NAME] = [fn]
             }
         }
         else {
@@ -86,11 +124,7 @@ export default class HooksRepository {
             hooksObj[HOOK_NAME] = [fn];
             moduleObj[MODULE_NAME] = hooksObj;
             this._hooksRepositoryArr.push(moduleObj)
-
-
         }
-
-
 
 
     }
