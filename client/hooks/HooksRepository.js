@@ -62,10 +62,18 @@ export default class HooksRepository {
         let hooks = [];
         hooks = this.getHooksByKeys(MODULE_NAME, HOOK_NAME);
 
-        let returnValue;
-        returnValue = this.applyFilterHooks(hooks, args)
+        if (hooks) {
+            console.log("hooks", hooks, "MODULE_NAME", MODULE_NAME, "HOOK_NAME", HOOK_NAME, "this._hooksRepositoryArr", this._hooksRepositoryArr)
+            let returnValue;
+            returnValue = this.applyFilterHooks(hooks, args)
 
-        return returnValue;
+            return returnValue;
+        } else {
+            if (args) {
+                return args
+            }
+        }
+
     }
     applyFilterHooks(hooks, args) {
         let value;
@@ -77,7 +85,7 @@ export default class HooksRepository {
             hooks.pop()
             return this.applyFilterHooks(hooks, value)
 
-        } 
+        }
         else {
             return { err: "hook is not a function" }
         }
