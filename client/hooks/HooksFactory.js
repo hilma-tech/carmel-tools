@@ -13,50 +13,56 @@ class HooksFactory {
     }
 
     async initRepository() {
-        let modulesList = require("./../../../../consts/ModulesConfig.json").modulesList;
-        let moduleInstance = null;
-        this.platformOptions = PlatformHandler.getPlatformOptions()
 
-        if (modulesList) {
-            for (let moduleName of modulesList) {
+        try {
+            let modulesList = require(`./../../../../consts/ModulesConfig.json`).modulesList;
+            let moduleInstance = null;
+            this.platformOptions = PlatformHandler.getPlatformOptions()
+            if (modulesList) {
+                for (let moduleName of modulesList) {
 
-                try {
-                    switch (this.platformOptions.suffix) {
-                        case "rn": {
+                    try {
+                        switch (this.platformOptions.suffix) {
+                            case "rn": {
 
-                            moduleInstance = await import(`./../../../${moduleName}/consts/HooksList_rn`);
-                            moduleInstance = moduleInstance.default
+                                moduleInstance = await import(`./../../../${moduleName}/consts/HooksList_rn`);
+                                moduleInstance = moduleInstance.default
 
-                            break;
+                                break;
+
+                            }
+                            case "web": {
+                                moduleInstance = await import(`./../../../${moduleName}/consts/HooksList_web`);
+                                moduleInstance = moduleInstance.default
+                                break;
+
+                            }
+                            case "cordova": {
+                                moduleInstance = await import(`./../../../${moduleName}/consts/HooksList_cordova`);
+                                moduleInstance = moduleInstance.default
+                                break;
+
+                            }
+
+
+                            default: {
+                                moduleInstance = await import(`./../../../${moduleName}/consts/HooksList`);
+                                moduleInstance = moduleInstance.default
+
+                            }
 
                         }
-                        case "web": {
-                            moduleInstance = await import(`./../../../${moduleName}/consts/HooksList_web`);
-                            moduleInstance = moduleInstance.default
-                            break;
+                        new moduleInstance(this.hooksRepository).addHooks()
 
-                        }
-                        case "cordova": {
-                            moduleInstance = await import(`./../../../${moduleName}/consts/HooksList_cordova`);
-                            moduleInstance = moduleInstance.default
-                            break;
-
-                        }
-
-
-                        default: {
-                            moduleInstance = await import(`./../../../${moduleName}/consts/HooksList`);
-                            moduleInstance = moduleInstance.default
-
-                        }
-
+                    } catch (err) {
+                        console.log("err from ", moduleName)
                     }
-                    new moduleInstance(this.hooksRepository).addHooks()
 
-                } catch (err) {
-                    console.log("err from ", moduleName)
                 }
             }
+        }
+        catch (error) {
+            console.log("error", error)
         }
     }
 
