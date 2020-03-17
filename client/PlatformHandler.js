@@ -41,8 +41,10 @@ const PlatformHandler = {
 
 
     getPlatformOptions() {
+        console.log("mmmm12", this.platformArr)
 
         let platform = this.getPlatformName()
+        console.log("mmmm1", this.platformArr)
         let platformOptions = { suffix: "" }
 
         this.platformArr.forEach(plat => {
@@ -55,11 +57,9 @@ const PlatformHandler = {
         return platformOptions;
     },
     getPlatformName() {
-    
-        //if cordova
-        if (window.hasOwnProperty("cordova") || GenericTools.isCordova()) {
-            return this.PLATFORM_CORDOVA;
-        }
+
+        console.log("1")
+
         //if react native
         if (typeof navigator != 'undefined' && navigator.product == 'ReactNative') {
             return this.PLATFORM_REACT_NATIVE
@@ -69,9 +69,18 @@ const PlatformHandler = {
             return this.PLATFORM_EXPO_REACT_NATIVE
         }
         //if web
-        if (typeof document != 'undefined') {
+        if (typeof navigator != 'undefined' && navigator.product == 'Gecko') {
             return this.PLATFORM_WEB
         }
+
+        //if cordova
+
+        if (window.hasOwnProperty("cordova")) {
+            return this.PLATFORM_CORDOVA;
+        }
+        // if (document && typeof document != 'undefined') {
+        //     return this.PLATFORM_WEB
+        // }
 
 
     }
