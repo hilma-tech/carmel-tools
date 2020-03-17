@@ -62,7 +62,7 @@ export default class HooksRepository {
 
     }
 
-    applyFilterHooks(hooks, args,length) {
+    applyFilterHooks(hooks, args, length) {
         let value = null;
         if (length === 0) return args;
 

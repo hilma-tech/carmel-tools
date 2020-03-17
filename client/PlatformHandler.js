@@ -41,10 +41,8 @@ const PlatformHandler = {
 
 
     getPlatformOptions() {
-        console.log("mmmm12", this.platformArr)
 
         let platform = this.getPlatformName()
-        console.log("mmmm1", this.platformArr)
         let platformOptions = { suffix: "" }
 
         this.platformArr.forEach(plat => {
@@ -58,7 +56,6 @@ const PlatformHandler = {
     },
     getPlatformName() {
 
-        console.log("1")
 
         //if react native
         if (typeof navigator != 'undefined' && navigator.product == 'ReactNative') {
