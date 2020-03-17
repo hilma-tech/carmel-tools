@@ -51,7 +51,7 @@ export default class HooksRepository {
 
         if (hooks) {
             let returnValue;
-            returnValue = this.applyFilterHooks(hooks, args)
+            returnValue = this.applyFilterHooks(hooks, args,hooks.length)
 
             return returnValue;
         } else {
@@ -62,14 +62,14 @@ export default class HooksRepository {
 
     }
 
-    applyFilterHooks(hooks, args) {
+    applyFilterHooks(hooks, args,length) {
         let value = null;
-        if (hooks.length === 0) return args;
+        if (length === 0) return args;
 
-        if (typeof hooks[hooks.length - 1] === "function") {
-            value = hooks[hooks.length - 1](args);
-            hooks.pop()
-            return this.applyFilterHooks(hooks, value)
+        if (typeof hooks[length - 1] === "function") {
+            value = hooks[length - 1](args);
+            // hooks.pop()
+            return this.applyFilterHooks(hooks, value,length-1)
 
         }
         
