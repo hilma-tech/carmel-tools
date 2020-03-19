@@ -29,7 +29,7 @@ export default class HooksRepository {
             }
         })
 
-        if(hooksOfModule[HOOK_NAME]){
+        if(hooksOfModule&&hooksOfModule[HOOK_NAME]){
 
             return hooksOfModule[HOOK_NAME];
         }
