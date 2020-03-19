@@ -29,7 +29,10 @@ export default class HooksRepository {
             }
         })
 
-        return hooksOfModule[HOOK_NAME];
+        if(hooksOfModule[HOOK_NAME]){
+
+            return hooksOfModule[HOOK_NAME];
+        }
 
         // ...find hooks by keys.....
     }
