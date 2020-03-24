@@ -12,18 +12,18 @@ let modulesList = require(`../../../../../consts/ModulesConfig.json`).modulesLis
 let platforms = ['rn', 'web', 'cordova'];
 
 let modulePlatformObj = {}
-fs.writeFileSync('../modulePlatform.js', "export default ModulePlatform = { ")
+fs.writeFileSync('../modulePlatform.js', "const ModulePlatform = { \n")
 
 let modplat = ""
 modulesList.forEach(mdl => {
     platforms.forEach(plt => {
         try {
             pathToModule = path.join(__dirname, "../../../../", `${mdl}/consts`, `HooksList_${plt}.js`);
-            console.log(pathToModule)
+            // console.log(pathToModule)
             if (fs.existsSync(pathToModule)) {
                 modplat = `${mdl}_${plt}`;
                 modulePlatformObj[`${mdl}_${plt}`] = `require${(`./../../../../${mdl}/consts/HooksList_${plt}`)}`
-                fs.appendFileSync('../modulePlatform.js', `${modplat}:require${`('./../../../${mdl}/consts/HooksList_${plt}').default,\n`}`)
+                fs.appendFileSync('../modulePlatform.js', `${modplat}: require${`('./../../../${mdl}/consts/HooksList_${plt}').default,\n`}`)
                 // fs.appendFileSync('../src/modules/tools/client/hooks/modulePlatform.js', `${modplat}:${`'./../../../${mdl}/consts/HooksList_${plt}',\n`}`)
             }
         }
@@ -34,5 +34,7 @@ modulesList.forEach(mdl => {
 });
 
 fs.appendFileSync('../modulePlatform.js', "}")
+fs.appendFileSync('../modulePlatform.js', "\nexport default ModulePlatform")
+
 modulePlatformObj = JSON.stringify(modulePlatformObj);
 // console.log(modulePlatformObj)
