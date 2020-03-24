@@ -3,36 +3,32 @@
 //     auth_rn: require('./../../../auth/consts/HooksList_rn')
 // }
 
-
 const fs = require('fs');
-let path = require('path');
-let pathToModule = null;
+const path = require('path');
 
 let modulesList = require(`../../../../../consts/ModulesConfig.json`).modulesList;
-let platforms = ['rn', 'web', 'cordova'];
+const platforms = ['rn', 'web', 'cordova'];
+const filePath = '../modulePlatform.js';
 
-let modulePlatformObj = {}
-fs.writeFileSync('../modulePlatform.js', "export default ModulePlatform = { ")
+//hl == hook list
+let hlPath;
+let hlPathRelativeToMdl;
 
-let modplat = ""
+fs.writeFileSync(filePath, "export default ModulePlatform = { ")
+
+let hlFileName = "" //combine module name + platform name
 modulesList.forEach(mdl => {
     platforms.forEach(plt => {
         try {
-            pathToModule = path.join(__dirname, "../../../../", `${mdl}/consts`, `HooksList_${plt}.js`);
-            console.log(pathToModule)
-            if (fs.existsSync(pathToModule)) {
-                modplat = `${mdl}_${plt}`;
-                modulePlatformObj[`${mdl}_${plt}`] = `require${(`./../../../../${mdl}/consts/HooksList_${plt}`)}`
-                fs.appendFileSync('../modulePlatform.js', `${modplat}:require${`('./../../../${mdl}/consts/HooksList_${plt}').default,\n`}`)
-                // fs.appendFileSync('../src/modules/tools/client/hooks/modulePlatform.js', `${modplat}:${`'./../../../${mdl}/consts/HooksList_${plt}',\n`}`)
+            hlPathRelativeToMdl = `${mdl}/consts/HooksList_${plt}.js`
+            hlPath = path.join(__dirname, `./../../../../${hlPathRelativeToMdl}`);
+            if (fs.existsSync(hlPath)) {
+                console.log("write to file -",hlPathRelativeToMdl)
+                hlFileName = `${mdl}_${plt}`;
+                fs.appendFileSync(filePath, `${hlFileName}:require${`('./../../../${hlPathRelativeToMdl}').default,\n`}`)
             }
-        }
-        catch (err) {
-            console.log("err", mdl)
-        }
+        } catch (err) { console.log("err", mdl) }
     });
 });
 
-fs.appendFileSync('../modulePlatform.js', "}")
-modulePlatformObj = JSON.stringify(modulePlatformObj);
-// console.log(modulePlatformObj)
+fs.appendFileSync(filePath, "}")
