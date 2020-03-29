@@ -1,4 +1,4 @@
-import GenericTools from "./../../tools/GenericTools"
+// import GenericTools from "./../../tools/GenericTools"
 
 const PlatformHandler = {
 
@@ -58,7 +58,7 @@ const PlatformHandler = {
 
 
         //if react native
-        if (typeof navigator != 'undefined' && navigator.product == 'ReactNative') {
+        if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
             return this.PLATFORM_REACT_NATIVE
         }
         if (localStorage.getItem("EXPO_CONSTANTS_INSTALLATION_ID")) {
@@ -66,7 +66,7 @@ const PlatformHandler = {
             return this.PLATFORM_EXPO_REACT_NATIVE
         }
         //if web
-        if (typeof navigator != 'undefined' && navigator.product == 'Gecko') {
+        if (typeof navigator !== 'undefined' && navigator.product === 'Gecko') {
             return this.PLATFORM_WEB
         }
 

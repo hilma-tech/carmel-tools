@@ -45,7 +45,7 @@ const AsyncTools = {
           json
         }))
         .catch(error => {
-          response.status == 204 ? resolve({ ok: response.ok, status: response.status, json: { ok: response.ok } }) : reject(error)
+          response.status === 204 ? resolve({ ok: response.ok, status: response.status, json: { ok: response.ok } }) : reject(error)
         })
     );
   },

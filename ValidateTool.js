@@ -11,7 +11,7 @@ const CarmelValidate = {
             Object.keys(source).forEach(key => {
                 if (this.isObject(source[key])) {
                     if (!(key in target)) {
-                        if (key != "eTarget") {
+                        if (key !== "eTarget") {
                             Object.assign(output, { [key]: source[key] });
                         }
                     }
@@ -28,7 +28,8 @@ const CarmelValidate = {
 
     runValidate(data, rules = null, whitelist = null, depth = 10) {
         if (depth < 0)
-            throw 'TOO DEEP BRO.' + depth;
+            // throw 'TOO DEEP BRO.' + depth;
+            throw new Error('TOO DEEP BRO.' + depth);
         if (whitelist) {
             data = Validate.cleanAttributes(data, whitelist);
             // if (rules) rules = Validate.cleanAttributes(rules, whitelist); //clean up rules isnt helping anythig.
@@ -38,7 +39,8 @@ const CarmelValidate = {
             try {
                 if (rules && rules.type) {
                     if (rules.type !== "object" && !this.isObject(rules.type)) {
-                        throw `WANTED ${rules.type} GOT object.`
+                        // throw `WANTED ${rules.type} GOT object.`
+                        throw new Error(`WANTED ${rules.type} GOT object.`);
                     }
                     else
                         delete rules.type; //cannot run that way
@@ -53,7 +55,7 @@ const CarmelValidate = {
         }
 
         else {
-            if (rules.eTarget && rules.eTarget.type == 'number' && !data) return;
+            if (rules.eTarget && rules.eTarget.type === 'number' && !data) return;
             return this.ValidateVar(data, rules);
         }
 
@@ -119,12 +121,12 @@ const CarmelValidate = {
 
     getObjectRules(data, rules, depth = 0, originKey = "") { // in this function we dont clean attr BECAUSE its the fileds names.
         if (depth < 0)
-            throw 'TOO DEEP BRO.' + depth;
+            throw new Error('TOO DEEP BRO.' + depth);
 
 
         let keys = Object.keys(data);
         if (keys.length > this.originRules.object.maximum) {
-            throw "DATA OUT OF RANGE";
+            throw new Error("DATA OUT OF RANGE");
         }
 
         if (!rules) rules = {};
@@ -139,7 +141,7 @@ const CarmelValidate = {
 
     getArrayRules(data, rules, depth) { // we run extra validations on array: this is not the default of validate.js.
         if (data.length > 100)
-            throw "DATA OUT OF RANGE";
+            throw new Error("DATA OUT OF RANGE");
         let extendedRules = {};
         if (rules && rules.extendedRules) {
             extendedRules = rules.extendedRules;
@@ -154,7 +156,7 @@ const CarmelValidate = {
             for (let i = 0; i < data.length; i++) {
 
                 if (extendedRules.consistent && typeof data[i] !== type)
-                    throw "ARRAY DOES NOT CONATINS CONSISTENT DATA";
+                    throw new Error("ARRAY DOES NOT CONATINS CONSISTENT DATA");
 
                 //inside extended rules, set rule by index(as 0:{...}) or by setting 'all'. 
                 res = this.runValidate(data[i], extendedRules[i] || extendedRules.all, null, depth - 1);
@@ -182,7 +184,7 @@ const CarmelValidate = {
                 length: { maximum: 10000 }
             }, rule);
         }
-        if (rule.eTarget && rule.eTarget.type == 'password') {
+        if (rule.eTarget && rule.eTarget.type === 'password') {
             return this.mergeDeep(
                 this.originRules.password, rule)
         }
