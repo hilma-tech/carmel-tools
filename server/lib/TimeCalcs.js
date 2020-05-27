@@ -12,6 +12,8 @@ class TimeCalcs {
         let now = new Date(d).toLocaleString("en-US", { timeZone: "Asia/Jerusalem", hour12: false });
         let nowArr = now.split(", ");
         let dateArr = nowArr[0].split("/");
+        if (!dateArr || !dateArr.length || !dateArr[0] || !dateArr[0].length || !dateArr[1] || !dateArr[1].length)
+            return null;
         let month = dateArr[0].length === 2 ? dateArr[0] : "0" + dateArr[0];
         let day = dateArr[1].length === 2 ? dateArr[1] : "0" + dateArr[1];
         let date = dateArr[2] + "-" + month + "-" + day;
