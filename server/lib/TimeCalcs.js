@@ -1,5 +1,4 @@
-module.exports = new class TimeCalcs {
-
+class TimeCalcs {
 
     //validate datetime with regex: ([0-9]{4}[-][0-9]{2}[-][0-9]{2}[T][0-9]{2}[:][0-9]{2}[:][0-9]{2}[.](000Z))
 
@@ -22,3 +21,5 @@ module.exports = new class TimeCalcs {
         return datetime;
     }
 }
+
+module.exports = new TimeCalcs;
