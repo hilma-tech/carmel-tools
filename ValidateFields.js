@@ -48,7 +48,7 @@ function validateFullNameInput(input, required) {
 // 023 456 7899
 // 0234567899
 function validatePhoneInput(input, required, placeholder, length = 10) {
-    input = input.replace(/[^0-9]/g, "");
+    input = input && input.replace(/[^0-9]/g, "");
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס מספר טלפון';
     else if (input.length !== length) return `מספר הטלפון חייב להכיל בדיוק ${length} תווים`;
