@@ -47,4 +47,4 @@ class TimeCalcs {
     }
 }
 
-module.exports = new TimeCalcs;
+module.exports = TimeCalcs;
