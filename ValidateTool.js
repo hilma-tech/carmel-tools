@@ -63,7 +63,7 @@ const CarmelValidate = {
         if (res === undefined)
             return { data: data, success: 1 };
         console.log("ERROR:", res);
-        return { success: 0 };
+        return { success: 0, erros: res };
 
 
     },
