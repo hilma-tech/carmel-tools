@@ -48,7 +48,7 @@ function validateFullNameInput(input, required) {
 // 023 456 7899
 // 0234567899
 function validatePhoneInput(input, required, placeholder, length = 10) {
-    input = input.replace(/[^0-9]/g, "");
+    input = input && input.replace(/[^0-9]/g, "");
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס מספר טלפון (ספרות בלבד)';
     else if (Array.isArray(length) && !length.includes(input.length)) return `מספר הטלפון חייב להכיל ${length} תווים`;
@@ -104,11 +104,11 @@ function validateStringInput(input, required, placeholder, length) {
 }
 
 function validateAddressInput(input, required) {
-    let res = /['\u0590-\u05FF \s 0-9]*/i.exec(input);
+    let res = /['",./\u0590-\u05FF \s 0-9]*/i.exec(input);
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס כתובת ומספר בית';
     else if (!/\d/.test(input) || res[0] !== input || !/['\u0590-\u05FF]/.test(input)) return 'חייב להכיל כתובת בעברית ומספר';
-    else if (!/^['\u0590-\u05FF ]* [0-9]*[0-9  ]$/.test(input) && !/^[0-9  ][0-9]* ['\u0590-\u05FF ]*$/.test(input)) return 'כתובת המגורים שהזנת שגויה';
+    else if (!/^['",.\u0590-\u05FF ]* [0-9]*\/{0,1}([0-9]+|[\u0590-\u05FF]\'{0,1})[,.'"\u0590-\u05FF ]*[0-9]*$/.test(input) && !/^[0-9  ][0-9]*\/{0,1}([0-9]*|[\u0590-\u05FF]\'{0,1})['",.\u0590-\u05FF ]*$/.test(input)) return 'כתובת המגורים שהזנת שגויה';
 
     return '';
 }
