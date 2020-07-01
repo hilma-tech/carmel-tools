@@ -26,15 +26,29 @@ function validateUsernameInput(input, required, placeholder = "שם משתמש")
     return '';
 }
 
-function validateFullNameInput(input, required) {
-
-    let res = /[\u0590-\u05FF \" \' \s]*/i.exec(input);
+// lan = ['he'], ['en'], ['he', 'en']
+function validateFullNameInput(input, required, placeholder, length, lan = ['he']) {
+    let res, resEn, resHe;
+    let he = lan.includes('he')
+    let en = lan.includes('en')
+    if (he && en) {
+        resEn = /[a-zA-Z \" \' \s]*/i.exec(input);
+        resHe = /[\u0590-\u05FF \" \' \s]*/i.exec(input);
+    }
+    else if (he) res = /[\u0590-\u05FF \" \' \s]*/i.exec(input);
+    else if (en) res = /[a-zA-Z \" \' \s]*/i.exec(input);
+    if (!res && !resEn && !resHe) return ""
     if (input && !input.length && !required) return '';
     else if (input.length > 30) return 'השם חייב להכיל פחות מ30 תווים';
     //TODO make sure that the following regex is only hebrew letters and at least one space between leters
     //without counting spaces at beggining or end of input
-    else if (res[0] !== input) return `השם חייב להכיל רק אותיות בעברית`;
-    else if (!input || !input.length || !/[\u0590-\u05FF \" \' \s]\s{1,}[\s \" \' \u0590-\u05FF]/.test(input)) return 'אנא הכנס שם פרטי ושם משפחה';
+    else if ((res && res[0] !== input) || ((resEn && resEn[0] !== input) && (resHe && resHe[0] !== input))) {
+        if (he && en)
+            return `השם חייב להכיל אותיות בעברית או באנגלית `;
+        else if (he) return `השם חייב להכיל אותיות רק בעברית`;
+        else if (en) return `השם חייב להכיל אותיות רק באנגלית `;
+    }
+    else if (!input || !input.length || (!/[\u0590-\u05FF \" \' \s]\s{1,}[\s \" \' \u0590-\u05FF]/.test(input) && !/[a-zA-Z \" \' \s]\s{1,}[\s \" \' a-zA-Z]/.test(input))) return 'אנא הכנס שם פרטי ושם משפחה';
 
     return '';
 }
