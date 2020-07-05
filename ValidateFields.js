@@ -117,10 +117,11 @@ function validateStringInput(input, required, placeholder, length) {
     return '';
 }
 
-function validateAddressInput(input, required) {
+function validateAddressInput(input, required, placeholder, length = 75) {
     let res = /['",./\u0590-\u05FF \s 0-9]*/i.exec(input);
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return 'אנא הכנס כתובת ומספר בית';
+    else if (input.length > length) return `חייב להכיל פחות מ${length} תווים`;
     else if (!/\d/.test(input) || res[0] !== input || !/['\u0590-\u05FF]/.test(input)) return 'חייב להכיל כתובת בעברית ומספר';
     else if (!/^['",.\u0590-\u05FF ]* [0-9]*\/{0,1}([0-9]+|[\u0590-\u05FF]\'{0,1})[,.'"\u0590-\u05FF ]*[0-9]*$/.test(input) && !/^[0-9  ][0-9]*\/{0,1}([0-9]*|[\u0590-\u05FF]\'{0,1})['",.\u0590-\u05FF ]*$/.test(input)) return 'כתובת המגורים שהזנת שגויה';
 
