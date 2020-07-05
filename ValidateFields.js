@@ -131,10 +131,11 @@ function validateAddressInput(input, required, placeholder, length = 75) {
 //should check max of number (smaller than largest int/int(11))
 
 const maxIntValue = 999999999;//2147483647;
-function validateNumberInput(input, required, placeholder) {
+function validateNumberInput(input, required, placeholder, maxLength) {
     if (input && !input.length && !required) return '';
     else if (!input || !input.length) return `אנא הכנס ${placeholder}`;
     else if (input <= 0) return `על ה${placeholder} להיות גדול מ-0`;
+    else if (maxLength && input > maxLength) return `על ה${placeholder} להיות קטן מ-${maxLength}`;
     else if (input > maxIntValue) return `על ה${placeholder} להכיל עד 9 ספרות`;//return `על ה${placeholder} להיות קטן מ-${maxIntValue}`;
     else if (!Number.isInteger(Number(input))) return `על ה${placeholder} להיות מספר שלם`;
 
