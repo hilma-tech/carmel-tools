@@ -48,8 +48,7 @@ function validateFullNameInput(input, required, placeholder, length, lan = ['he'
         else if (he) return `השם חייב להכיל אותיות רק בעברית`;
         else if (en) return `השם חייב להכיל אותיות רק באנגלית `;
     }
-    else if (!input || !input.length || (!/[\u0590-\u05FF \" \' \s]\s{1,}[\s \" \' \u0590-\u05FF]/.test(input) && !/[a-zA-Z \" \' \s]\s{1,}[\s \" \' a-zA-Z]/.test(input))) return 'אנא הכנס שם פרטי ושם משפחה';
-
+    else if (!input || !input.length || input.split(" ").filter(item => item != "").length <= 1 || (!/[\u0590-\u05FF \" \' \s]\s{1,}[\s \" \' \u0590-\u05FF]/.test(input) && !/[a-zA-Z \" \' \s]\s{1,}[\s \" \' a-zA-Z]/.test(input))) return 'אנא הכנס שם פרטי ושם משפחה';
     return '';
 }
 
