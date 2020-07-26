@@ -25,8 +25,18 @@ const AsyncTools = {
     );
   },
 
+
   superFetch(url, payload) {
-    if (GenericTools.isCordova() && process.env.REACT_APP_DOMAIN) url = process.env.REACT_APP_DOMAIN + url;
+    
+    if ((GenericTools.isCordova() || (window.Capacitor && window.Capacitor.platform == "android")) && process.env.REACT_APP_DOMAIN) {
+      url = process.env.REACT_APP_DOMAIN + url;
+      let cookies = "kl=" + localStorage.getItem("kl") + "; klo=" + localStorage.getItem("klo") + "; access_token=" + localStorage.getItem("access_token")
+      let basicHeaders = { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': localStorage.getItem("access_token"), 'Cookie': cookies }
+      if (payload.headers) payload.headers = { ...basicHeaders, ...payload.headers }
+      else payload.headers = basicHeaders;
+    }
+
+
     let fPromise = payload == null ? fetch(url) : fetch(url, payload);
 
     return new Promise((resolve, reject) => {
