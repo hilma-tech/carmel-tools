@@ -38,9 +38,13 @@ const GenericTools = {
     }
   },
   isCordova() {
-    return document.URL.indexOf('http://') === -1 &&
-      document.URL.indexOf('https://') === -1
+    return (document.URL.indexOf('http://') === -1 &&
+      document.URL.indexOf('https://') === -1) || (window.Capacitor && window.Capacitor.platform === "android")
+  },
+  isCapacitor() {
+    return window.Capacitor && (window.Capacitor.platform == "android" || window.Capacitor.platform == "ios")
   }
+
 }
 
 export default GenericTools;
