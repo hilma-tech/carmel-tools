@@ -38,8 +38,7 @@ const GenericTools = {
     }
   },
   isCordova() {
-    return (document.URL.indexOf('http://') === -1 &&
-      document.URL.indexOf('https://') === -1) || (window.Capacitor && window.Capacitor.platform === "android")
+    return (document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1)
   },
   isCapacitor() {
     return window.Capacitor && (window.Capacitor.platform == "android" || window.Capacitor.platform == "ios")

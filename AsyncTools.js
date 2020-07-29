@@ -28,7 +28,7 @@ const AsyncTools = {
 
   superFetch(url, payload) {
     
-    if ((GenericTools.isCordova() || (window.Capacitor && window.Capacitor.platform == "android")) && process.env.REACT_APP_DOMAIN) {
+    if ((GenericTools.isCordova() || GenericTools.isCapacitor()) && process.env.REACT_APP_DOMAIN) {
       url = process.env.REACT_APP_DOMAIN + url;
       let cookies = "kl=" + localStorage.getItem("kl") + "; klo=" + localStorage.getItem("klo") + "; access_token=" + localStorage.getItem("access_token")
       let basicHeaders = { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': localStorage.getItem("access_token"), 'Cookie': cookies }
