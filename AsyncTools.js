@@ -65,7 +65,7 @@ const AsyncTools = {
           // extract the error from the server's json
           return resolve([null, response.json]);
         })
-        .catch((error) => resolve([null, { error: { message: "No response, check your network connectivity", statusCode: 500, name: "ERROR" } }]));
+        .catch((error) => resolve([null, "No response, check your network connectivity"]));
     });
   }
 
