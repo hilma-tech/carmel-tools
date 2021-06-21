@@ -52,7 +52,7 @@ const AsyncTools = {
   },
 
   superFetch(url, payload) {
-    if (GenericTools.isCordova() && process.env.REACT_APP_DOMAIN) url = process.env.REACT_APP_DOMAIN + url;
+    if (GenericTools.isCapacitor() && process.env.REACT_APP_DOMAIN) url = process.env.REACT_APP_DOMAIN + url;
     let fPromise = payload == null ? fetch(url) : fetch(url, payload);
 
     return new Promise((resolve, reject) => {
